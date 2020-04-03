@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <style type="text/css">
+        /* Chart.js */
+
+        @-webkit-keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        @keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        .chartjs-render-monitor {
+            -webkit-animation: chartjs-render-animation 0.001s;
+            animation: chartjs-render-animation 0.001s;
+        }
+
+        .form-signin {
+            width: 100%;
+            display: flex;
+            margin: 0 auto;
+            margin-bottom: 20px;
+        }
+
+        .form-signin .form-control {
+            position: relative;
+            box-sizing: border-box;
+            height: auto;
+            padding: 10px;
+            font-size: 16px;
+            width: 200px;
+            /*margin-right: 20px;*/
+            /*float:left;*/
+            text-align:right;
+        }
+        .searchName .ipt-line {
+            margin: 0 6px;
+        }
+        .form-signin .btn-block {
+            width: 70px;
+            height: 45px;
+        }
+        .searchTab:after {
+            content: "";
+            display: block;
+            height: 0;
+            clear: both;
+        }
+        .searchName {
+            float: left;
+            display: flex;
+            margin-bottom: 15px;
+            align-items: center;
+            margin-right: 20px;
+            height: 45px;
+        }
+    </style>
+</head>
+
+<body>
+<!--引入抽取的topbar-->
+<!--模板名：会使用thymeleaf的前后缀配置规则进行解析-->
+<div th:replace="commons/bar::topbar"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <!--引入侧边栏-->
+        <div th:replace="commons/bar::#sidebar(activeUri='lotteryList.html')"></div>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <p style="color: red" th:text="${msg}" th:if="${not #strings.isEmpty(msg)}"></p>
+            <h2><a class="btn btn-sm btn-success" href="#" th:href="@{/lottery/toLotteryUpload}">上传 Lottery</a></h2>
+
+            <form class="form-signin" th:action="@{/lottery/getlottery}" method="post">
+
+                <div class="searchTab">
+                    <div class="searchName">
+                        <label>开奖期数：</label>
+                        <div class="input-group">
+                            <input class="form-control" type="text" id="strWinNumber" name="strWinNumber" th:value="${strWinNumber}"/>
+                        </div>
+                    </div>
+
+                    <div class="searchName">
+                        <label>开始时间：</label>
+                        <div class='input-group date' id='datetimepicker1'>
+                            <input type='text' class="form-control" name="dtWinTimeStart" th:value="${dtWinTimeStart}"/>
+                            <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                             </span>
+                        </div>
+
+                        <label>结束时间：</label>
+                        <div class='input-group date' id='datetimepicker2'>
+                            <input type='text' class="form-control" name="dtWinTimeEnd" th:value="${dtWinTimeEnd}"/>
+                            <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                        </div>
+                    </div>
+                    <div class="searchName">
+                        <label>开奖红号: </label>
+                        <div class="input-group">
+                            <input type="text" name="lockyNums" id="lockyNums" th:value="${lockyNums}"
+                                   class="form-control" placeholder="输入逗号分隔的红号" >
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-lg btn-primary btn-block" id="btn" type="submit">查询</button>
+            </form>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-sm">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>期号</th>
+                        <th>红号</th>
+                        <th>蓝号</th>
+                        <th>中奖个数</th>
+                        <th>时间</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="lottery:${lotteries}">
+                        <td th:text="${lottery.lId}"></td>
+                        <td th:text="${lottery.strWinNumber}"></td>
+                        <td th:utext="${lottery.strReds}"></td>
+                        <td th:text="${lottery.nBlue}"></td>
+                        <td th:text="${lottery.score}"></td>
+                        <!--<td th:text="${#dates.format(lottery.strWinTime, 'yyyy-MM-dd')}"></td>-->
+                        <td th:text="${lottery.strWinTime}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+
+<!-- Bootstrap core CSS -->
+<link href="asserts/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/4.0.0/css/bootstrap.css}" rel="stylesheet">
+<link href="asserts/css/dashboard.css" th:href="@{/asserts/css/dashboard.css}" rel="stylesheet">
+<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+
+
+
+<!--<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>-->
+<script type="text/javascript" src="asserts/js/jquery-3.2.1.slim.min.js"
+        th:src="@{/webjars/jquery/3.3.1/jquery.js}"></script>
+<script type="text/javascript" src="asserts/js/popper.min.js"
+        th:src="@{/webjars/popper.js/1.11.1/dist/popper.js}"></script>
+<script type="text/javascript" src="asserts/js/bootstrap.min.js"
+        th:src="@{/webjars/bootstrap/4.0.0/js/bootstrap.js}"></script>
+
+<!-- Icons -->
+<script src="/asserts/js/moment.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="/asserts/js/moment-with-locales.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+<script>
+    // feather.replace()
+</script>
+<script>
+    $("#btn").click(function () {
+        //为空判断
+        var lockyNums = $("#lockyNums").val();
+        if (typeof lockyNums !== "undefined" && lockyNums !== null && lockyNums !== "") {
+            //数字格式
+            var reg = /^(\d+[,])*(\d+)$/;
+            if (!reg.exec(lockyNums)) {
+                alert("请输入逗号分隔数字！");
+                return false;
+            }
+        }
+
+
+        //字符分割
+       /* var numbers = lockyNums.split(",");
+        if (numbers.length !== 6) {
+            alert("字符串长度有误！");
+            return false;
+        }*/
+        return true;
+    });
+
+
+
+    $(function () {
+        var picker1 = $('#datetimepicker1').datetimepicker({
+            format: 'YYYY-MM-DD',
+            locale: moment.locale('zh-cn'),
+            //minDate: '2016-7-1'
+        });
+        var picker2 = $('#datetimepicker2').datetimepicker({
+            format: 'YYYY-MM-DD',
+            locale: moment.locale('zh-cn')
+        });
+        //动态设置最小值
+        picker1.on('dp.change', function (e) {
+            picker2.data('DateTimePicker').minDate(e.date);
+        });
+        //动态设置最大值
+        picker2.on('dp.change', function (e) {
+            picker1.data('DateTimePicker').maxDate(e.date);
+        });
+    });
+
+
+
+
+
+</script>
+</body>
+</html>
